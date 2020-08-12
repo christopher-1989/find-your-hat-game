@@ -8,21 +8,68 @@ const pathCharacter = '*';
 class Field {
     constructor (field) {
         this.field = field
-        this.startPosition = []
+        this.fieldSize = field.length
+        this.userPosition = this.startPosition
     }
     print () {
         for (let row = 0; row < this.field.length; row++) {
             console.log(String(this.field[row].join('')))
         }
     }
-    get findStart () {
+    
+    get startPosition () {
         for (let row =0; row < this.field.length; row++){
-            const startPosition = this.field[row].findIndex(position => {return position === '*'})
-            if (startPosition !== -1) {
-                return [row,startPosition]
+            const position = this.field[row].findIndex(position => {return position === '*'})
+            if (position !== -1) {
+                return [row,position]
             }
-        }
+        } 
     }
+    get userPosition () {
+        return this._userPosition
+    }
+    set userPosition (position) {
+        this._userPosition = position
+    }
+
+    canMoveUp() {
+        return true
+    }
+    canMoveDown() {
+        return true
+    }
+    canMoveLeft() {
+        return true
+    }
+    canMoveRight() {
+        return true
+    }
+
+    moveUp() {
+        const newPosition = this.userPosition
+        newPosition[0]--
+        this.field[newPosition[0]][newPosition[1]] = '*'
+        return this.userPosition = newPosition    }
+    moveDown() {
+        const newPosition = this.userPosition
+        newPosition[0]++
+        this.field[newPosition[0]][newPosition[1]] = '*'
+        return this.userPosition = newPosition    }
+    moveLeft() {
+        const newPosition = this.userPosition
+        newPosition[1]--
+        this.field[newPosition[0]][newPosition[1]] = '*'
+        return this.userPosition = newPosition
+    }
+    moveRight() {
+        const newPosition = this.userPosition
+        newPosition[1]++
+        this.field[newPosition[0]][newPosition[1]] = '*'
+        return this.userPosition = newPosition
+    }
+
+
+
 }
 
 const myField = new Field([
@@ -31,34 +78,48 @@ const myField = new Field([
     ['░', '^', '░'],
   ]);
 
-myField.print()
+for (let round =1; round <4;round++){
+    myField.print()
 
-//const userInput = prompt('Which way would you like to move? ')
-const moveUser = (userInput) => {
-    const lowerInput = userInput.toLowerCase()
-    switch (lowerInput) {
-        case ('u'):
-            console.log('moveup')
-            break
-        case ('d'):
-            console.log('movedown')
-            break   
-        case ('l'):
-            console.log('moveleft')
-            break
-        case ('r'):
-            console.log('moveright')
-            break
-        default:
-            console.log('invalid move')
+    const userInput = prompt('Which way would you like to move? ')
+    const moveUser = (field, userInput) => {
+        const lowerInput = userInput.toLowerCase()
+        switch (lowerInput) {
+            case ('u'):
+                if (field.canMoveUp()) {
+                    field.moveUp()
+                }
+                break
+            case ('d'):
+                if (field.canMoveDown()) {
+                    field.moveDown()             
+                }          
+                break     
+            case ('l'):
+                if (field.canMoveLeft()) {
+                    field.moveLeft()
+                }      
+                break      
+            case ('r'):
+                if (field.canMoveRight()) {
+                    field.moveRight()
+                }         
+                break   
+            default:
+                console.log('invalid move')
+        }
     }
+
+    moveUser(myField, userInput)
 }
-
-//moveUser(userInput)
-console.log(myField.findStart)
-
+myField.print()
+//console.log(myField.userPosition)
+/*
 const Array = 
 [
     ['*', '░', 'O'],
     ['░', 'O', '░']];
 
+const test = [1,2]
+test[1]++
+console.log(test)*/
