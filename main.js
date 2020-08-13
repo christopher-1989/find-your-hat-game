@@ -1,5 +1,5 @@
 const prompt = require('prompt-sync')({sigint: true});
-import shuffle from "./shuffle.js"
+const shuffle = require("./shuffle.js")
 
 const fieldCharacter = '░';
 
