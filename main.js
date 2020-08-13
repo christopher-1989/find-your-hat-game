@@ -1,7 +1,7 @@
 const prompt = require('prompt-sync')({sigint: true});
 
 const hat = '^';
-const hole = 'O';
+//const hole = 'O';
 const fieldCharacter = '░';
 const pathCharacter = '*';
 
@@ -10,6 +10,7 @@ class Field {
         this.field = field
         this.fieldSize = field.length
         this.userPosition = this.startPosition
+        this._hasWon = false
     }
     print () {
         for (let row = 0; row < this.field.length; row++) {
@@ -39,6 +40,10 @@ class Field {
         else if (this.field[this.userPosition[0] -1][this.userPosition[1]] === "O") {
             return false 
         }
+        else if (this.field[this.userPosition[0]-1][this.userPosition[1]] === "^") {
+            this._hasWon = true
+            return true
+        }
         else {
             return true
         }
@@ -49,6 +54,10 @@ class Field {
         }
         else if (this.field[this.userPosition[0] + 1][this.userPosition[1]] === "O") {
             return false 
+        }
+        else if (this.field[this.userPosition[0]+1][this.userPosition[1]] === "^") {
+            this._hasWon = true
+            return true
         }
         else {
             return true
@@ -61,6 +70,10 @@ class Field {
         else if (this.field[this.userPosition[0]][this.userPosition[1]-1] === "O") {
             return false 
         }
+        else if (this.field[this.userPosition[0]][this.userPosition[1]-1] === "^") {
+            this._hasWon = true
+            return true
+        }
         else {
             return true
         }
@@ -71,6 +84,10 @@ class Field {
         }
         else if (this.field[this.userPosition[0]][this.userPosition[1]+1] === "O") {
             return false 
+        }
+        else if (this.field[this.userPosition[0]][this.userPosition[1]+1] === "^") {
+            this._hasWon = true
+            return true
         }
         else {
             return true
@@ -100,17 +117,68 @@ class Field {
         return this.userPosition = newPosition
     }
 
-
+    static generateField(size) {
+        let newField = []
+        const holes = Math.floor(size*size*0.25)
+        const charactersForField = ["^","*"]
+        for (let hole = 1; hole <= holes; hole++){
+            charactersForField.push("O")
+        }
+        for (let charactersToGo = size*size - charactersForField.length; charactersToGo > 0; charactersToGo--) {
+            charactersForField.push(fieldCharacter)
+        }
+        shuffle(charactersForField)
+        for (let rows = 0; rows < size; rows++){
+            newField.push([])
+        }
+        for (let rows = 0; rows < size; rows++){
+            for (let cols = 0; cols < size; cols++) {
+                
+                newField[rows].push(charactersForField.pop())
+            }
+        }
+        return newField
+    }
 
 }
-
-const myField = new Field([
-    ['*', '░', 'O'],
-    ['░', 'O', '░'],
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+  
+    return array;
+  }
+const createdField = Field.generateField(5)
+const myField = new Field(createdField)
+/*const myField = new Field([
+    ['░', '░', 'O'],
+    ['░', 'O', '*'],
     ['░', '^', '░'],
   ]);
+*/
 
-for (let round =1; round <4;round++){
+let gameEnd = false
+const loseGame = () => {
+    gameEnd = true
+    console.log("Game Over, you lost")
+    return gameEnd
+}
+const  winGame = () => {
+    gameEnd = true
+    console.log("Congratulations you found the hat. Game Over")
+}
+while (gameEnd === false){
     myField.print()
 
     const userInput = prompt('Which way would you like to move? ')
@@ -119,30 +187,46 @@ for (let round =1; round <4;round++){
         switch (lowerInput) {
             case ('u'):
                 if (field.canMoveUp()) {
-                    field.moveUp()
-                } else {
-                    return (console.log("Game over"))
+                    if (!field._hasWon === true) {
+                        field.moveUp() 
+                    } else {
+                        winGame()
+                    }
+                }  else {
+                    loseGame()
                 }   
                 break
             case ('d'):
                 if (field.canMoveDown()) {
-                    field.moveDown()             
-                } else {
-                    return (console.log("Game over"))
-                }          
+                    if (!field._hasWon === true) {
+                        field.moveDown() 
+                    } else {
+                        winGame()
+                    }
+                }  else {
+                    loseGame()
+                }              
                 break     
             case ('l'):
                 if (field.canMoveLeft()) {
-                    field.moveLeft()
+                    if (!field._hasWon === true) {
+                        field.moveLeft() 
+                    } else {
+                        winGame()
+                    }
                 }  else {
-                    return (console.log("Game over"))
+                    loseGame()
                 }       
                 break      
             case ('r'):
                 if (field.canMoveRight()) {
-                    field.moveRight()
+                    if (!field._hasWon === true) {
+                        field.moveRight() 
+                    } else {
+                        winGame()
+                    }
                 }  else {
-                    return (console.log("Game over"))
+                    loseGame()
                 }          
                 break   
             default:
@@ -152,14 +236,3 @@ for (let round =1; round <4;round++){
 
     moveUser(myField, userInput)
 }
-myField.print()
-//console.log(myField.userPosition)
-/*
-const Array = 
-[
-    ['*', '░', 'O'],
-    ['░', 'O', '░']];
-
-const test = [1,2]
-test[1]++
-console.log(test)*/
