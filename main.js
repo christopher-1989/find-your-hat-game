@@ -33,16 +33,48 @@ class Field {
     }
 
     canMoveUp() {
-        return true
+        if (this.userPosition[0] - 1 <  0) {
+            return false
+        }
+        else if (this.field[this.userPosition[0] -1][this.userPosition[1]] === "O") {
+            return false 
+        }
+        else {
+            return true
+        }
     }
     canMoveDown() {
-        return true
+        if (this.userPosition[0] + 1 > this.fieldSize -1) {
+            return false
+        }
+        else if (this.field[this.userPosition[0] + 1][this.userPosition[1]] === "O") {
+            return false 
+        }
+        else {
+            return true
+        }
     }
     canMoveLeft() {
-        return true
+        if (this.userPosition[1] -1 <  0) {
+            return false
+        }
+        else if (this.field[this.userPosition[0]][this.userPosition[1]-1] === "O") {
+            return false 
+        }
+        else {
+            return true
+        }
     }
     canMoveRight() {
-        return true
+        if (this.userPosition[1] +1> this.fieldSize -1) {
+            return false
+        }
+        else if (this.field[this.userPosition[0]][this.userPosition[1]+1] === "O") {
+            return false 
+        }
+        else {
+            return true
+        }
     }
 
     moveUp() {
@@ -88,22 +120,30 @@ for (let round =1; round <4;round++){
             case ('u'):
                 if (field.canMoveUp()) {
                     field.moveUp()
-                }
+                } else {
+                    return (console.log("Game over"))
+                }   
                 break
             case ('d'):
                 if (field.canMoveDown()) {
                     field.moveDown()             
+                } else {
+                    return (console.log("Game over"))
                 }          
                 break     
             case ('l'):
                 if (field.canMoveLeft()) {
                     field.moveLeft()
-                }      
+                }  else {
+                    return (console.log("Game over"))
+                }       
                 break      
             case ('r'):
                 if (field.canMoveRight()) {
                     field.moveRight()
-                }         
+                }  else {
+                    return (console.log("Game over"))
+                }          
                 break   
             default:
                 console.log('invalid move')
